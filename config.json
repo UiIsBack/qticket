@@ -1,5 +1,6 @@
 {
     "num": 0,
     "staff-log": channel_id here,
-    "token": "token_here"
+    "token": "token_here",
+    "guild": guild_id_here
 }
