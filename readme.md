@@ -1,6 +1,7 @@
 ## Qticket
 
-
+# Changelog:
+4/6/2022: converted to / commands and did some minor changes fixing bugs
 # How to use:
 1. download the file
 2. extract the zip
