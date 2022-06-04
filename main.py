@@ -51,8 +51,10 @@ class Confirm(nextcord.ui.View):
         json.dump(t, open("config.json", "w"), indent = 4)
         numt = t['num']
         members = client.get_all_members
-
-        guild = client.get_guild(982392273985732629); channel = await guild.create_text_channel(f"{numt}-ticket")
+        with open("config.json", "r") as f:
+            s = json.load(f)
+        d = s['guild']
+        guild = client.get_guild(d); channel = await guild.create_text_channel(f"{numt}-ticket")
         await interaction.response.send_message("Created ticket", ephemeral=True)
         await channel.set_permissions(guild.default_role, view_channel=False)
         await channel.set_permissions(interaction.user, view_channel=True)
