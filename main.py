@@ -100,7 +100,7 @@ async def closeall(ctx):
     await ctx.send(embed = ee)
 @client.command()
 @commands.has_permissions(administrator=True)
-async def close(ctx):
+async def closeticket(ctx):
         await ctx.send_message("Closing ticket", ephemeral=True); await asyncio.sleep(2)
         await ctx.channel.delete()
         with open("config.json", "r+") as f:
@@ -118,7 +118,7 @@ async def close(ctx):
         b.send(embed=s)
 @client.command()
 async def cmds(ctx):
-    o = nextcord.Embed(title="Qticket", description="prefix = >\n>setup setups ticket sys in that channel\n>closeall closes all tickets\n>close closes current ticket", color=nextcord.Color.blurple())
+    o = nextcord.Embed(title="Qticket", description="prefix = >\n>setup setups ticket sys in that channel\n>closeall closes all tickets\n>closeticket closes current ticket", color=nextcord.Color.blurple())
     await ctx.send(embed = o)
 with open("config.json", "r") as a:
     k = json.load(a)
