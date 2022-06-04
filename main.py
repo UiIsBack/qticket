@@ -1,17 +1,18 @@
 import asyncio
-from fileinput import close
 from nextcord import TextChannel
 import nextcord, json
 from nextcord.ext import commands
+from nextcord import Colour, Interaction, SlashOption, ChannelType
 
 
+bot = commands.Bot(command_prefix=">")
 
-client = commands.Bot(command_prefix=">")
-
-@client.event
+@bot.event
 async def on_ready():
     print("[+]")
-
+with open('config.json', "r") as a:
+    data = json.load(a)
+gid = data['guild']
 class Close(nextcord.ui.View):
     def __init__(self):
         super().__init__()
@@ -28,7 +29,7 @@ class Close(nextcord.ui.View):
         with open("config.json", "r") as e:
             d = json.load(e)
         md = d['staff-log']
-        b = client.get_channel(md)
+        b = bot.get_channel(md)
         s = nextcord.Embed(title="Log's", description=f"""  Ticket Closed
                                                             Ticket: #{interaction.channel}
                                                             User: {interaction.user.mention}
@@ -50,18 +51,16 @@ class Confirm(nextcord.ui.View):
         t['num'] = t['num'] + 1
         json.dump(t, open("config.json", "w"), indent = 4)
         numt = t['num']
-        members = client.get_all_members
-        with open("config.json", "r") as f:
-            s = json.load(f)
-        d = s['guild']
-        guild = client.get_guild(d); channel = await guild.create_text_channel(f"{numt}-ticket")
+        members = bot.get_all_members
+
+        guild = bot.get_guild(gid); channel = await guild.create_text_channel(f"{numt}-ticket")
         await interaction.response.send_message("Created ticket", ephemeral=True)
         await channel.set_permissions(guild.default_role, view_channel=False)
         await channel.set_permissions(interaction.user, view_channel=True)
         with open("config.json", "r") as e:
             d = json.load(e)
         md = d['staff-log']
-        b = client.get_channel(md)
+        b = bot.get_channel(md)
         s = nextcord.Embed(title="Log's", description=f"""  Ticket created
                                                             Ticket: <#{channel.id}>
                                                             User: {interaction.user.mention}
@@ -75,22 +74,22 @@ class Confirm(nextcord.ui.View):
         
 
 
-@client.command()
+@bot.slash_command(description="Setsup ticket system!")
 @commands.has_permissions(administrator=True)
 
-async def setup(ctx):
+async def setup(interaction: Interaction):
 
     view = Confirm()
     embed= nextcord.Embed(title='Tickets', description="Press the button below to crerate ticket!", color=nextcord.Color.blurple())
-    await ctx.send(embed=embed, view=view)
+    await interaction.send(embed=embed, view=view)
 
     await view.wait()
-@client.command()
+@bot.slash_command(description="Closes all open tickets!")
 @commands.has_permissions(administrator=True)
-async def closeall(ctx):
+async def closeall(interaction: Interaction):
     f = nextcord.Embed(title="Tickets", description="Closing all tickets", color=nextcord.Color.blurple())  
-    await ctx.send(embed = f)
-    channels = ctx.guild.channels
+    await interaction.send(embed = f)
+    channels = interaction.guild.channels
     for channel in channels:
         name = channel.name
         if str(name).endswith("-ticket") or str(name).startswith("ticket-"):
@@ -99,12 +98,12 @@ async def closeall(ctx):
                 t = json.load(f)
     t['num'] = 0
     ee = nextcord.Embed(title="Tickets", description="all tickets closed", color=nextcord.Color.green())  
-    await ctx.send(embed = ee)
-@client.command()
+    await interaction.send(embed = ee)
+@bot.slash_command(description="Closes current ticket!")
 @commands.has_permissions(administrator=True)
-async def closeticket(ctx):
-        await ctx.send_message("Closing ticket", ephemeral=True); await asyncio.sleep(2)
-        await ctx.channel.delete()
+async def close(interaction: Interaction):
+        await interaction.send("Closing ticket", ephemeral=True); await asyncio.sleep(2)
+        await interaction.channel.delete()
         with open("config.json", "r+") as f:
             t = json.load(f)
         t['num'] = t['num'] - 1
@@ -112,17 +111,18 @@ async def closeticket(ctx):
         with open("config.json", "r") as e:
             d = json.load(e)
         md = d['staff-log']
-        b = client.get_channel(md)
+        b = bot.get_channel(md)
         s = nextcord.Embed(title="Log's", description=f"""  Ticket Closed
-                                                            Ticket: #{ctx.channel}
-                                                            User: {ctx.user.mention}
+                                                            Ticket: #{interaction.channel}
+                                                            User: {interaction.user.mention}
                                                             """, color=nextcord.Color.red())
         b.send(embed=s)
-@client.command()
-async def cmds(ctx):
-    o = nextcord.Embed(title="Qticket", description="prefix = >\n>setup setups ticket sys in that channel\n>closeall closes all tickets\n>closeticket closes current ticket", color=nextcord.Color.blurple())
-    await ctx.send(embed = o)
+@bot.slash_command(description="Shows all commands!")
+@commands.has_permissions(administrator=True)
+async def cmds(interaction: Interaction):
+    o = nextcord.Embed(title="Qticket", description="prefix = /\n/setup setups ticket sys in that channel\n/closeall closes all tickets\n/close closes current ticket", color=nextcord.Color.blurple())
+    await interaction.send(embed = o)
 with open("config.json", "r") as a:
     k = json.load(a)
 token = k['token']
-client.run(token)
+bot.run(token)
