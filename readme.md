@@ -10,7 +10,7 @@
 5. ignore the num section go down to where it says staff-log and replace "channel_id here" with your channel id to recieve mod logs
 6. replace the guild id here part with the id to ur server u want to use the bot on
 7. go to the token section in config and replace *token_here* with your [bot-token](https://discord.com/developers/applications)
-8. invite your bot to the server u want the ticket sys in 
+8. invite your bot to the server make sure to have application.commands on the url generator and give the bot admin perms u want the ticket sys in 
 9. open install.bat file
 10. open main.py file
 11. make sure bot has admin in server
