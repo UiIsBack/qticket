@@ -84,6 +84,7 @@ async def setup(ctx):
 
     await view.wait()
 @client.command()
+@commands.has_permissions(administrator=True)
 async def closeall(ctx):
     f = nextcord.Embed(title="Tickets", description="Closing all tickets", color=nextcord.Color.blurple())  
     await ctx.send(embed = f)
@@ -98,6 +99,7 @@ async def closeall(ctx):
     ee = nextcord.Embed(title="Tickets", description="all tickets closed", color=nextcord.Color.green())  
     await ctx.send(embed = ee)
 @client.command()
+@commands.has_permissions(administrator=True)
 async def close(ctx):
         await ctx.send_message("Closing ticket", ephemeral=True); await asyncio.sleep(2)
         await ctx.channel.delete()
